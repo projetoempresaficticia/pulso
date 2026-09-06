@@ -245,6 +245,23 @@ p { margin: 0; }
 .pu-fio { display: flex; flex-direction: column; gap: var(--pu-e3);
           margin-top: auto; }
 
+/* O aviso do sistema não é de ninguém: não leva bolha nem lado, fica ao
+   meio como o separador de dia. Mas leva mais peso, porque conta algo que
+   aconteceu à conversa e não dentro dela. */
+.pu-sistema { text-align: center; margin: var(--pu-e3) 0; }
+.pu-sistema span {
+  display: inline-block; max-width: 90%; padding: 7px 14px; border-radius: 999px;
+  background: var(--pu-laranja-veu); color: var(--pu-laranja-texto);
+  font-size: 13px; font-weight: 600; line-height: 1.45;
+}
+
+/* Um grupo fechado não tem caixa de escrever: tem uma explicação. */
+.pu-fechado {
+  display: flex; align-items: center; justify-content: center; gap: var(--pu-e2);
+  padding: var(--pu-e4); text-align: center;
+  color: var(--pu-suave); font-size: 13.5px;
+}
+
 .pu-dia { text-align: center; margin: var(--pu-e2) 0; }
 .pu-dia span {
   display: inline-block; padding: 4px 12px; border-radius: 999px;

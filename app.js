@@ -71,6 +71,7 @@ function desenharLista() {
           </span>
           <span class="ultima">${esc(previa)}</span>
         </span>
+        ${c.fechada ? '<span class="pu-selo pu-selo-grupo">fechado</span>' : ''}
         ${porLer ? `<span class="pu-conta">${esc(c.por_ler)}</span>` : ''}
       </button>`;
   }).join('');
@@ -148,8 +149,19 @@ async function abrir(id, semMarcar) {
   document.getElementById('fio-avatar').innerHTML = avatar(semente, nome);
   document.getElementById('fio-nome').textContent = nome || '—';
   document.getElementById('fio-sub').textContent = d.tipo === 'grupo'
-    ? d.membros.length + ' pessoas'
+    ? d.membros.length + ' pessoas' + (d.fechada ? ' · fechado' : '')
     : (outro ? formatarNumero(outro.numero) : '');
+
+  // Num grupo fechado não há onde escrever — há uma explicação. O servidor
+  // também recusa, mas quem olha para o ecrã merece perceber porquê antes
+  // de tentar.
+  document.getElementById('form-enviar').hidden = !!d.fechada;
+  document.getElementById('aviso-fechado').hidden = !d.fechada;
+  if (d.fechada) {
+    document.getElementById('texto-fechado').textContent =
+      (d.fechada_por ? d.fechada_por + ' fechou este grupo. ' : 'Este grupo foi fechado. ')
+      + 'As mensagens ficam para consulta.';
+  }
 
   desenharFio();
   aoFundo();
@@ -182,6 +194,11 @@ function desenharFio() {
     const dia = mesmoDia(anterior, m.criada_em) ? '' :
       `<div class="pu-dia"><span>${esc(diaPorExtenso(m.criada_em))}</span></div>`;
     anterior = m.criada_em;
+
+    if (m.sistema) {
+      return dia + `
+        <div class="pu-sistema"><span>${esc(m.corpo)}</span></div>`;
+    }
 
     if (m.apagada) {
       return dia + `
@@ -399,10 +416,11 @@ document.getElementById('btn-criar-grupo').addEventListener('click', async () =>
 document.getElementById('btn-detalhes').addEventListener('click', () => {
   const d = estado.aberta;
   if (!d) return;
-  const souAdmin = !!d.membros.find((m) => m.sou_eu && m.papel === 'admin');
+  // Num grupo fechado não há nada para gerir: é um arquivo.
+  const souAdmin = !d.fechada && !!d.membros.find((m) => m.sou_eu && m.papel === 'admin');
 
   document.getElementById('titulo-detalhes').textContent =
-    d.tipo === 'grupo' ? 'Grupo' : 'Contacto';
+    d.tipo === 'grupo' ? (d.fechada ? 'Grupo fechado' : 'Grupo') : 'Contacto';
 
   document.getElementById('detalhes-corpo').innerHTML = `
     ${d.tipo === 'grupo' && souAdmin ? `
@@ -512,12 +530,16 @@ function ligarDetalhes() {
     const quantos = estado.aberta.membros.length;
     janela.close();
 
-    // O texto diz exatamente o que se perde. Um grupo tem muitos donos: a
-    // pessoa tem de perceber que não está só a arrumar a sua caixa.
+    // Apagar o grupo não é apagar o que os outros escreveram. O texto diz
+    // as duas coisas que acontecem, para ninguém julgar que está a fazer a
+    // outra.
+    const outros = quantos - 1;
     const sim = await perguntar(`Apagar o grupo "${nome}"?`,
-      `O grupo acaba para as ${quantos} pessoas que lá estão, e as mensagens `
-      + 'desaparecem — incluindo as que não foram suas. Isto não tem volta. '
-      + 'Se só quer deixar de o receber, use "Sair do grupo".',
+      'Sai da sua lista e o grupo fecha-se: ninguém volta a escrever lá. '
+      + (outros > 0
+          ? `As ${outros} pessoas que lá estão ficam com a conversa inteira e `
+            + 'são avisadas de que o fechou.'
+          : 'Como não fica lá mais ninguém, a conversa desaparece.'),
       'Apagar o grupo');
     if (!sim) return;
 
@@ -525,8 +547,10 @@ function ligarDetalhes() {
     if (!r.ok) { mostrarMsg(msgGeral, r.erro, 'erro'); return; }
     fecharFio();
     await carregar(false);
-    mostrarMsg(msgGeral,
-      `Grupo "${r.dados.nome}" apagado, com ${r.dados.mensagens} mensagem(ns).`, 'aviso');
+    mostrarMsg(msgGeral, r.dados.apagado_de_vez
+      ? `Grupo "${r.dados.nome}" apagado. Não estava lá mais ninguém.`
+      : `Grupo "${r.dados.nome}" fechado. As ${r.dados.ficaram} pessoas que lá `
+        + 'estavam ficam com o histórico.', 'aviso');
   });
 }
 
