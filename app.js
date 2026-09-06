@@ -427,6 +427,8 @@ document.getElementById('btn-detalhes').addEventListener('click', () => {
     </div>
     <p class="pu-msg" id="msg-detalhes"></p>`;
 
+  // Sair é pessoal; apagar acaba com o grupo para toda a gente. São coisas
+  // diferentes e ficam separadas — apagar só aparece a quem o criou.
   document.getElementById('detalhes-pe').innerHTML = d.tipo === 'grupo'
     ? `${souAdmin ? `
          <button type="button" class="pu-botao pu-botao-linha" id="btn-juntar">
@@ -435,7 +437,11 @@ document.getElementById('btn-detalhes').addEventListener('click', () => {
          <button type="button" class="pu-botao" id="btn-guardar-nome">Guardar nome</button>` : ''}
        <button type="button" class="pu-botao pu-botao-linha" id="btn-sair-grupo">
          <span class="pu-icone i-sair" aria-hidden="true"></span>Sair do grupo
-       </button>`
+       </button>
+       ${souAdmin ? `
+         <button type="button" class="pu-botao pu-botao-linha" id="btn-apagar-grupo">
+           <span class="pu-icone i-lixo" aria-hidden="true"></span>Apagar grupo
+         </button>` : ''}`
     : `<button type="button" class="pu-botao pu-botao-linha"
                data-fechar="janela-detalhes">Fechar</button>`;
 
@@ -473,16 +479,54 @@ function ligarDetalhes() {
 
   const sair = document.getElementById('btn-sair-grupo');
   if (sair) sair.addEventListener('click', async () => {
+    const id = estado.aberta.id;
+    const sozinho = estado.aberta.membros.length === 1;
     janela.close();
+
     const sim = await perguntar('Sair do grupo?',
-      'Deixa de receber as mensagens. O que já escreveu fica — o resto do '
-      + 'grupo precisa do fio inteiro para o que lá está fazer sentido.',
+      sozinho
+        ? 'É a última pessoa cá dentro. Ao sair, o grupo acaba e as mensagens '
+          + 'desaparecem — não fica ninguém a quem a conversa pertença.'
+        : 'Deixa de receber as mensagens. O que já escreveu fica — o resto do '
+          + 'grupo precisa do fio inteiro para o que lá está fazer sentido.',
       'Sair do grupo');
     if (!sim) return;
-    const r = await api('msg_sair', { p_conversa: estado.aberta.id });
+
+    const r = await api('msg_sair', { p_conversa: id });
     if (!r.ok) { mostrarMsg(msgGeral, r.erro, 'erro'); return; }
     fecharFio();
     await carregar(false);
+    if (r.dados.grupo_morreu) {
+      mostrarMsg(msgGeral, 'Saiu, e como era a última pessoa o grupo acabou.', 'aviso');
+    } else if (r.dados.novo_admin) {
+      // Quem fica tem de saber que passou a poder gerir o grupo, senão
+      // descobre-o por acaso semanas depois.
+      mostrarMsg(msgGeral, 'Saiu. A gestão do grupo passou a quem lá ficou.', 'aviso');
+    }
+  });
+
+  const apagar = document.getElementById('btn-apagar-grupo');
+  if (apagar) apagar.addEventListener('click', async () => {
+    const id = estado.aberta.id;
+    const nome = estado.aberta.nome;
+    const quantos = estado.aberta.membros.length;
+    janela.close();
+
+    // O texto diz exatamente o que se perde. Um grupo tem muitos donos: a
+    // pessoa tem de perceber que não está só a arrumar a sua caixa.
+    const sim = await perguntar(`Apagar o grupo "${nome}"?`,
+      `O grupo acaba para as ${quantos} pessoas que lá estão, e as mensagens `
+      + 'desaparecem — incluindo as que não foram suas. Isto não tem volta. '
+      + 'Se só quer deixar de o receber, use "Sair do grupo".',
+      'Apagar o grupo');
+    if (!sim) return;
+
+    const r = await api('msg_grupo_apagar', { p_conversa: id });
+    if (!r.ok) { mostrarMsg(msgGeral, r.erro, 'erro'); return; }
+    fecharFio();
+    await carregar(false);
+    mostrarMsg(msgGeral,
+      `Grupo "${r.dados.nome}" apagado, com ${r.dados.mensagens} mensagem(ns).`, 'aviso');
   });
 }
 
