@@ -195,17 +195,21 @@ function desenharFio() {
     const autor = (d.tipo === 'grupo' && !m.minha)
       ? `<span class="autor">${esc(m.de_nome)}</span>` : '';
 
+    // Tudo numa linha só: qualquer mudança de linha aqui dentro seria
+    // desenhada dentro da bolha, por causa do `pre-wrap` do texto.
+    const balao = `<span class="pu-balao ${m.minha ? 'pu-minha' : 'pu-dele'}">`
+      + autor
+      + `<span class="texto">${esc(m.corpo)}</span>`
+      + `<span class="hora">${esc(horaCurta(m.criada_em))}</span>`
+      + `<button type="button" class="pu-apagar-balao" data-apagar="${esc(m.id)}"`
+      + ` data-minha="${m.minha}" aria-label="Apagar mensagem">`
+      + '<span class="pu-icone pu-icone-16 i-lixo" aria-hidden="true"></span>'
+      + '</button></span>';
+
     return dia + `
       <div class="pu-linha ${m.minha ? 'minha' : ''}">
         ${m.minha ? '' : avatar(m.de, m.de_nome, 'pu-avatar-30')}
-        <span class="pu-balao ${m.minha ? 'pu-minha' : 'pu-dele'}">
-          ${autor}${esc(m.corpo)}
-          <span class="hora">${esc(horaCurta(m.criada_em))}</span>
-          <button type="button" class="pu-apagar-balao" data-apagar="${esc(m.id)}"
-                  data-minha="${m.minha}" aria-label="Apagar mensagem">
-            <span class="pu-icone pu-icone-16 i-lixo" aria-hidden="true"></span>
-          </button>
-        </span>
+        ${balao}
       </div>`;
   }).join('');
 

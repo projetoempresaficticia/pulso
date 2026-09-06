@@ -248,8 +248,13 @@ p { margin: 0; }
 .pu-balao {
   position: relative; max-width: min(74%, 560px); padding: 11px 15px;
   border-radius: var(--pu-r-balao); font-size: 15px; line-height: 1.5;
-  overflow-wrap: anywhere; white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
+/* O `pre-wrap` vive AQUI, à volta do texto da mensagem, e não no balão.
+   No balão, ele desenhava também as mudanças de linha e a indentação do
+   código que monta o HTML — e a bolha de uma linha ficava com a altura de
+   seis, com o texto empurrado para o meio. */
+.pu-balao .texto { white-space: pre-wrap; }
 .pu-balao .hora { display: block; margin-top: 5px; font-size: 11.5px; opacity: .78; }
 .pu-balao .autor { display: block; font-size: 12.5px; font-weight: 700;
                    margin-bottom: 3px; color: var(--pu-secundaria); }
@@ -273,7 +278,7 @@ p { margin: 0; }
 .pu-linha:hover .pu-apagar-balao,
 .pu-apagar-balao:focus-visible { opacity: .8; }
 .pu-apagar-balao:hover { background: rgba(127,127,127,.18); opacity: 1; }
-.pu-minha .pu-balao { padding-right: 30px; }
+.pu-balao.pu-minha { padding-right: 34px; }
 @media (hover: none) { .pu-apagar-balao { opacity: .6; } }
 
 /* ── escrever ─────────────────────────────────────────────────────── */
