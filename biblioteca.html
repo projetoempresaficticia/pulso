@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="pu-versao" content="66bf19c28816" />
+  <meta name="pu-versao" content="2cc40888a515" />
   <title>Pulso — biblioteca</title>
   <link rel="icon" href="favicon-32.png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -132,7 +132,15 @@ section { margin-bottom: 56px; }
 .botao-linha:hover { border-color: var(--pu-primaria); background: var(--pu-veu); }
 .botao-fantasma { background: transparent; color: var(--pu-primaria); }
 .botao-fantasma:hover { background: var(--pu-veu); }
-.botao:disabled { opacity: .45; cursor: not-allowed; }
+/* Sem `opacity`. A opacidade não esbate só a letra: esbate o botão
+   inteiro, e o branco sobre o índigo esbatido caía para 2,67:1. As
+   regras dispensam contraste num controlo desligado, mas um botão que
+   não se lê continua a ser um botão que não se lê. Preenchimento cinza
+   do kit com letra ardósia: 7,07:1, e continua a parecer desligado. */
+.botao:disabled {
+  background: var(--pu-cinza); color: var(--pu-secundaria);
+  border-color: transparent; cursor: not-allowed;
+}
 .botao:focus-visible { outline: 2px solid var(--pu-primaria); outline-offset: 2px; }
 .botao-redondo { width: 44px; padding: 0; border-radius: 50%; }
 
@@ -144,7 +152,12 @@ section { margin-bottom: 56px; }
   font: 400 15px/1.5 var(--pu-fonte); color: var(--pu-tinta);
   background: #fff; border: 1.5px solid var(--pu-borda); border-radius: var(--pu-r);
 }
-.campo input::placeholder { color: #9AA2BC; opacity: 1; }
+/* #9AA2BC dava 2,54:1 sobre branco. Um placeholder é texto: diz o que
+   se espera que a pessoa escreva, e quem não o lê não sabe o que pôr.
+   #67718F dá 4,84:1 e continua visivelmente mais claro do que o valor
+   escrito (#1F2747), que é o que o faz ler-se como dica. */
+.campo input::placeholder,
+.escrever input::placeholder { color: #67718F; opacity: 1; }
 .campo input:focus, .campo textarea:focus {
   outline: none; border-color: var(--pu-primaria);
   box-shadow: 0 0 0 3px rgba(31,39,71,.14);
@@ -843,11 +856,15 @@ document.getElementById('paleta').innerHTML = CORES.map(([nome, hex, origem]) =>
   const comoLetra = contraste(hex, '#FFFFFF');       // a cor a escrever em branco
   const brancoEmCima = contraste('#FFFFFF', hex);    // branco por cima da cor
   const escuroEmCima = contraste('#1F2747', hex);    // índigo por cima da cor
-  const claro = luminancia(hex) > 0.4;
+  // Qual das duas letras ganha, e não um limiar de luminância inventado: o
+  // laranja do kit tem luminância 0,38 — abaixo de qualquer limiar razoável
+  // — e mesmo assim precisa de letra escura. A pergunta certa não é "esta
+  // cor é clara?", é "qual das duas se lê melhor por cima dela?".
+  const usarEscuro = escuroEmCima > brancoEmCima;
   return `
     <div class="cor">
-      <div class="amostra" style="background:${hex};color:${claro ? '#1F2747' : '#fff'}">
-        ${claro ? 'texto escuro' : 'texto branco'}
+      <div class="amostra" style="background:${hex};color:${usarEscuro ? '#1F2747' : '#fff'}">
+        ${usarEscuro ? 'texto escuro' : 'texto branco'}
       </div>
       <div class="info">
         <div class="nome">${nome}</div>
