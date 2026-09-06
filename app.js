@@ -464,7 +464,10 @@ document.getElementById('btn-detalhes').addEventListener('click', () => {
            <span class="pu-icone i-lixo" aria-hidden="true"></span>Apagar grupo
          </button>` : ''}`
     : `<button type="button" class="pu-botao pu-botao-linha"
-               data-fechar="janela-detalhes">Fechar</button>`;
+               data-fechar="janela-detalhes">Fechar</button>
+       <button type="button" class="pu-botao pu-botao-linha" id="btn-apagar-conversa">
+         <span class="pu-icone i-lixo" aria-hidden="true"></span>Apagar conversa
+       </button>`;
 
   ligarDetalhes();
   abrirJanela('janela-detalhes');
@@ -524,6 +527,30 @@ function ligarDetalhes() {
       // descobre-o por acaso semanas depois.
       mostrarMsg(msgGeral, 'Saiu. A gestão do grupo passou a quem lá ficou.', 'aviso');
     }
+  });
+
+  const apagarConversa = document.getElementById('btn-apagar-conversa');
+  if (apagarConversa) apagarConversa.addEventListener('click', async () => {
+    const id = estado.aberta.id;
+    const outro = estado.aberta.membros.find((m) => !m.sou_eu);
+    janela.close();
+
+    // O texto separa as duas coisas que as pessoas confundem: sai da MINHA
+    // lista, e do outro lado não muda nada. É a mesma regra do grupo.
+    const sim = await perguntar('Apagar esta conversa?',
+      'Sai da sua lista com as mensagens que tem. '
+      + (outro ? outro.nome : 'A outra pessoa') + ' fica com a conversa '
+      + 'inteira e não dá por nada. Se voltarem a escrever-lhe, a conversa '
+      + 'reaparece — mas só com o que for novo.',
+      'Apagar conversa');
+    if (!sim) return;
+
+    const r = await api('msg_conversa_apagar', { p_conversa: id });
+    if (!r.ok) { mostrarMsg(msgGeral, r.erro, 'erro'); return; }
+    fecharFio();
+    await carregar(false);
+    mostrarMsg(msgGeral,
+      `Conversa apagada da sua lista (${r.dados.apagadas} mensagem(ns)).`, 'aviso');
   });
 
   const apagar = document.getElementById('btn-apagar-grupo');
