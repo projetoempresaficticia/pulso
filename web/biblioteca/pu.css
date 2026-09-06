@@ -234,8 +234,16 @@ p { margin: 0; }
 .pu-barra .titulo b { display: block; font-size: 15.5px; }
 .pu-barra .titulo span { font-size: 12.5px; color: var(--pu-suave); }
 
-.pu-corpo { flex: 1; overflow-y: auto; padding: var(--pu-e5); min-height: 0; }
-.pu-fio { display: flex; flex-direction: column; gap: var(--pu-e3); }
+/* Coluna com o fio empurrado para baixo por `margin-top: auto`. Numa
+   conversa com poucas mensagens elas assentam no fundo, encostadas à
+   caixa de escrever, como em qualquer chat — e não a flutuar no topo
+   com um vazio por baixo. Com muitas, rola normalmente. */
+.pu-corpo {
+  flex: 1; overflow-y: auto; min-height: 0; padding: var(--pu-e5);
+  display: flex; flex-direction: column;
+}
+.pu-fio { display: flex; flex-direction: column; gap: var(--pu-e3);
+          margin-top: auto; }
 
 .pu-dia { text-align: center; margin: var(--pu-e2) 0; }
 .pu-dia span {
@@ -391,6 +399,9 @@ dialog::backdrop { background: rgba(31,39,71,.45); }
     flex-direction: row; align-items: center; overflow-x: auto;
     padding: var(--pu-e2) var(--pu-e3); gap: var(--pu-e1);
   }
+  /* O <nav> é um bloco: em pé os três botões empilham, e a barra ficava
+     com três andares de altura no telemóvel. Aqui passa a linha. */
+  .pu-lateral nav { display: flex; align-items: center; gap: var(--pu-e1); }
   .pu-marca, .pu-empurra, .pu-lateral hr, .pu-eu { display: none; }
   .pu-lateral .pu-nav { width: auto; white-space: nowrap; }
   .pu-coluna { border-right: 0; }
