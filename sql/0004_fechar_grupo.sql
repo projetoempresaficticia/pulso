@@ -355,6 +355,9 @@ begin
                        where m2.conversa_id = c.id),
           'ultima', case when u.apagada_em is not null then null else u.corpo end,
           'ultima_apagada', u.apagada_em is not null,
+          -- um aviso do sistema ja diz quem foi; a lista nao lhe volta
+          -- a por o nome a frente
+          'ultima_sistema', coalesce(u.sistema, false),
           'ultima_de', u.de_cedula,
           'ultima_de_nome', public.fn_nome_de(u.de_cedula),
           'ultima_minha', u.de_cedula = v_eu,
@@ -376,7 +379,7 @@ begin
          limit 1
       ) o on c.tipo = 'direta'
       left join lateral (
-        select g.corpo, g.de_cedula, g.criada_em, g.apagada_em, g.seq
+        select g.corpo, g.de_cedula, g.criada_em, g.apagada_em, g.seq, g.sistema
           from public.mensagens g
          where g.conversa_id = c.id
            and not exists (select 1 from public.mensagens_ocultas h

@@ -54,8 +54,11 @@ function desenharLista() {
     // Numa direta o nome é da pessoa; num grupo é do grupo, e a última
     // linha leva o nome de quem a escreveu à frente — senão num grupo de
     // cinco não se sabe quem falou.
+    // Um aviso do sistema ja diz quem foi: por-lhe o nome a frente dava
+    // "Rita Mendes: Rita Mendes fechou o grupo".
     const previa = c.ultima_apagada ? 'Mensagem apagada'
       : c.ultima == null ? 'Sem mensagens'
+      : c.ultima_sistema ? c.ultima
       : (c.tipo === 'grupo' || c.ultima_minha)
         ? (c.ultima_minha ? 'Você: ' : (c.ultima_de_nome || '') + ': ') + c.ultima
         : c.ultima;
