@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="pu-versao" content="66bf19c28816" />
+  <title>Pulso — biblioteca</title>
+  <link rel="icon" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   PULSO — biblioteca visual
+   Tudo o que esta página mostra sai do kit que o Germano mandou. As
+   únicas coisas que acrescentei são as que a medição obrigou, e estão
+   assinaladas onde aparecem.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* do kit, tal e qual */
+  --pu-primaria:   #1F2747;   /* Primary Indigo   */
+  --pu-secundaria: #38446A;   /* Secondary Slate  */
+  --pu-laranja:    #F28C38;   /* Accent Orange    */
+  --pu-verde:      #67C7A5;   /* Online Green     */
+  --pu-fundo:      #F5F6FB;   /* Background       */
+  --pu-cinza:      #D9DEEA;   /* Muted Gray       */
+
+  /* acrescentados pela medição — ver a secção 01 */
+  --pu-laranja-texto: #A85416;
+  --pu-verde-texto:   #2A7259;
+  --pu-laranja-veu:   #FDF0E4;
+  --pu-verde-veu:     #E8F5EF;
+  --pu-veu:           #EEF0F7;
+
+  --pu-superficie: #FFFFFF;
+  --pu-tinta:      #1F2747;
+  --pu-suave:      #5B6483;
+  --pu-borda:      #D9DEEA;
+
+  --pu-r: 12px;
+  --pu-r-balao: 18px;
+  --pu-fonte: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pu-sombra: 0 1px 2px rgba(31,39,71,.05), 0 10px 30px rgba(31,39,71,.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0; background: var(--pu-fundo); color: var(--pu-tinta);
+  font: 400 16px/1.55 var(--pu-fonte); -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { margin: 0; letter-spacing: -.02em; }
+h1 { font-size: 32px; font-weight: 700; line-height: 1.15; }
+h2 { font-size: 24px; font-weight: 600; }
+h3 { font-size: 18px; font-weight: 600; }
+p  { margin: 0; }
+code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .88em;
+       background: var(--pu-veu); padding: 2px 6px; border-radius: 6px; }
+
+.env { max-width: 1120px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.cabeca { display: flex; align-items: center; gap: 18px; margin-bottom: 8px; }
+.cabeca img { width: 64px; height: 64px; border-radius: 16px; }
+.cabeca small { display: block; font-size: 15px; font-weight: 400;
+                color: var(--pu-suave); letter-spacing: 0; margin-top: 4px; }
+.aviso-topo {
+  margin: 28px 0 44px; padding: 16px 20px; border-radius: var(--pu-r);
+  background: var(--pu-veu); font-size: 14.5px; line-height: 1.6;
+}
+
+section { margin-bottom: 56px; }
+.rotulo {
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px;
+}
+.rotulo .num {
+  font-size: 13px; font-weight: 700; color: var(--pu-laranja-texto);
+  letter-spacing: .1em;
+}
+.nota { color: var(--pu-suave); font-size: 14.5px; margin: 8px 0 20px; max-width: 68ch; }
+
+.cartao {
+  background: var(--pu-superficie); border: 1px solid var(--pu-borda);
+  border-radius: 16px; padding: 24px; box-shadow: var(--pu-sombra);
+}
+.grelha { display: grid; gap: 20px; }
+@media (min-width: 800px) { .g2 { grid-template-columns: 1fr 1fr; } }
+
+/* ── 01 paleta ───────────────────────────────────────────────────── */
+.paleta { display: grid; gap: 14px;
+          grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
+.cor { border: 1px solid var(--pu-borda); border-radius: 12px; overflow: hidden;
+       background: var(--pu-superficie); }
+.cor .amostra { height: 78px; display: grid; place-items: center;
+                font-size: 13px; font-weight: 600; }
+.cor .info { padding: 10px 12px; }
+.cor .nome { font-size: 13.5px; font-weight: 600; }
+.cor .hex  { font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+             color: var(--pu-suave); }
+.cor .medida { font-size: 12px; margin-top: 6px; line-height: 1.45; }
+.passa { color: var(--pu-verde-texto); font-weight: 600; }
+.falha { color: #B3261E; font-weight: 600; }
+
+/* ── 02 tipografia ───────────────────────────────────────────────── */
+.tipo-linha { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap;
+              padding: 14px 0; border-bottom: 1px solid var(--pu-borda); }
+.tipo-linha:last-child { border-bottom: 0; }
+.tipo-linha .spec { margin-left: auto; font-size: 12.5px; color: var(--pu-suave);
+                    font-family: ui-monospace, Menlo, monospace; }
+
+/* ── 03 botões ───────────────────────────────────────────────────── */
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 22px; border: 1.5px solid transparent;
+  border-radius: var(--pu-r); font: 600 15px/1 var(--pu-fonte);
+  cursor: pointer; background: var(--pu-primaria); color: #fff;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.botao:hover { background: #151B33; }
+.botao-2 { background: var(--pu-secundaria); }
+.botao-2:hover { background: #2C3555; }
+/* O laranja é preenchimento com letra escura por cima — nunca com branco.
+   Ver a medição na secção 01. */
+.botao-laranja { background: var(--pu-laranja); color: var(--pu-primaria); }
+.botao-laranja:hover { background: #E07E28; }
+.botao-linha { background: transparent; color: var(--pu-primaria);
+               border-color: var(--pu-borda); }
+.botao-linha:hover { border-color: var(--pu-primaria); background: var(--pu-veu); }
+.botao-fantasma { background: transparent; color: var(--pu-primaria); }
+.botao-fantasma:hover { background: var(--pu-veu); }
+.botao:disabled { opacity: .45; cursor: not-allowed; }
+.botao:focus-visible { outline: 2px solid var(--pu-primaria); outline-offset: 2px; }
+.botao-redondo { width: 44px; padding: 0; border-radius: 50%; }
+
+/* ── 04 campos ───────────────────────────────────────────────────── */
+.campo { margin-bottom: 18px; }
+.campo label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 7px; }
+.campo input, .campo textarea {
+  width: 100%; min-height: 46px; padding: 12px 16px;
+  font: 400 15px/1.5 var(--pu-fonte); color: var(--pu-tinta);
+  background: #fff; border: 1.5px solid var(--pu-borda); border-radius: var(--pu-r);
+}
+.campo input::placeholder { color: #9AA2BC; opacity: 1; }
+.campo input:focus, .campo textarea:focus {
+  outline: none; border-color: var(--pu-primaria);
+  box-shadow: 0 0 0 3px rgba(31,39,71,.14);
+}
+.busca { position: relative; }
+.busca input { padding-left: 42px; }
+.busca svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+             color: var(--pu-suave); }
+
+/* a caixa de escrever, que é a peça mais usada da app */
+.escrever {
+  display: flex; align-items: center; gap: 10px; padding: 8px;
+  background: #fff; border: 1.5px solid var(--pu-borda); border-radius: 999px;
+}
+.escrever input {
+  flex: 1; min-width: 0; border: 0; outline: none; background: transparent;
+  font: 400 15px/1.5 var(--pu-fonte); color: var(--pu-tinta); padding: 6px 4px;
+}
+.escrever .icone-botao {
+  display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0;
+  border: 0; border-radius: 50%; background: transparent;
+  color: var(--pu-suave); cursor: pointer;
+}
+.escrever .icone-botao:hover { background: var(--pu-veu); color: var(--pu-primaria); }
+.escrever .enviar { background: var(--pu-primaria); color: #fff; width: 40px; height: 40px; }
+.escrever .enviar:hover { background: #151B33; }
+
+/* ── 05 bolhas ───────────────────────────────────────────────────── */
+.fio { display: flex; flex-direction: column; gap: 12px; }
+.bolha-linha { display: flex; align-items: flex-end; gap: 10px; }
+.bolha-linha.minha { flex-direction: row-reverse; }
+.bolha {
+  max-width: 74%; padding: 11px 15px; border-radius: var(--pu-r-balao);
+  font-size: 15px; line-height: 1.5;
+}
+.bolha .hora { display: block; margin-top: 5px; font-size: 11.5px; opacity: .72; }
+/* Recebida: fundo claro, letra escura. */
+.bolha-dele { background: var(--pu-veu); color: var(--pu-tinta);
+              border-bottom-left-radius: 6px; }
+/* Enviada: índigo cheio com branco por cima — 14,6:1, medido. */
+.bolha-minha { background: var(--pu-primaria); color: #fff;
+               border-bottom-right-radius: 6px; }
+.bolha-apagada { background: transparent; border: 1.5px dashed var(--pu-borda);
+                 color: var(--pu-suave); font-style: italic; }
+.separador-dia { text-align: center; margin: 6px 0; }
+.separador-dia span { display: inline-block; padding: 4px 12px; border-radius: 999px;
+  background: var(--pu-veu); color: var(--pu-suave); font-size: 12.5px; font-weight: 500; }
+
+/* ── avatar ──────────────────────────────────────────────────────── */
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: grid;
+          place-items: center; color: #fff; font-weight: 600; font-size: 14px;
+          flex-shrink: 0; position: relative; }
+.avatar-30 { width: 30px; height: 30px; font-size: 12px; }
+.avatar .ponto-estado {
+  position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px;
+  border-radius: 50%; border: 2.5px solid #fff;
+}
+.online  { background: var(--pu-verde); }
+.ausente { background: var(--pu-cinza); }
+
+/* ── 06 lista de conversas ───────────────────────────────────────── */
+.conversa {
+  display: flex; align-items: flex-start; gap: 12px; width: 100%;
+  padding: 12px 14px; border: 0; border-radius: var(--pu-r);
+  background: transparent; text-align: left; font: inherit; color: inherit;
+  cursor: pointer;
+}
+.conversa:hover { background: var(--pu-fundo); }
+.conversa[aria-current="true"] { background: var(--pu-veu); }
+.conversa .quem { display: flex; justify-content: space-between; gap: 10px; }
+.conversa .nome { font-size: 15px; font-weight: 600; }
+.conversa .hora { font-size: 12px; color: var(--pu-suave); white-space: nowrap; }
+.conversa .ultima { font-size: 13.5px; color: var(--pu-suave); margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conversa[data-por-ler="true"] .nome,
+.conversa[data-por-ler="true"] .ultima { font-weight: 700; color: var(--pu-tinta); }
+
+/* O contador por ler é laranja cheio com letra escura por cima: o laranja
+   do kit dá 2,45:1 com branco, e um número que não se lê não conta nada. */
+.conta {
+  min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px;
+  background: var(--pu-laranja); color: var(--pu-primaria);
+  font-size: 12px; font-weight: 700; display: grid; place-items: center;
+}
+
+/* ── 07 selos ────────────────────────────────────────────────────── */
+.selo { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px;
+        border-radius: 999px; font-size: 13px; font-weight: 600; }
+.selo .ponto { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.selo-online   { background: var(--pu-verde-veu);   color: var(--pu-verde-texto); }
+.selo-escreve  { background: var(--pu-veu);         color: var(--pu-secundaria); }
+.selo-calado   { background: var(--pu-veu);         color: var(--pu-suave); }
+.selo-porler   { background: var(--pu-laranja-veu); color: var(--pu-laranja-texto); }
+.selo-grupo    { background: var(--pu-veu);         color: var(--pu-secundaria); }
+
+/* ── 08 cartão de contacto ───────────────────────────────────────── */
+.contacto { text-align: center; }
+.contacto .avatar { width: 76px; height: 76px; font-size: 26px; margin: 0 auto 14px; }
+.contacto .numero { font-family: ui-monospace, Menlo, monospace; font-size: 14px;
+                    color: var(--pu-suave); margin-top: 2px; }
+.contacto .barras { display: flex; justify-content: center; gap: 28px;
+                    margin: 18px 0; }
+.contacto .barras b { display: block; font-size: 20px; }
+.contacto .barras span { font-size: 12.5px; color: var(--pu-suave); }
+
+/* ── 09 anexo e aviso ────────────────────────────────────────────── */
+.anexo { display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+         border: 1px solid var(--pu-borda); border-radius: var(--pu-r); }
+.anexo .quadro { width: 46px; height: 46px; border-radius: 8px; flex-shrink: 0;
+                 background: linear-gradient(140deg, #38446A, #1F2747); }
+.anexo .nome { font-size: 14px; font-weight: 600; }
+.anexo .peso { font-size: 12.5px; color: var(--pu-suave); }
+.torrada { display: flex; align-items: flex-start; gap: 12px; padding: 14px;
+           background: #fff; border: 1px solid var(--pu-borda);
+           border-radius: var(--pu-r); box-shadow: var(--pu-sombra); }
+.torrada .sino { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+                 display: grid; place-items: center;
+                 background: var(--pu-laranja); color: var(--pu-primaria); }
+
+/* ── 10 a app montada ────────────────────────────────────────────── */
+.app {
+  display: grid; grid-template-columns: 210px 300px 1fr; height: 520px;
+  border: 1px solid var(--pu-borda); border-radius: 16px; overflow: hidden;
+  background: #fff; box-shadow: var(--pu-sombra);
+}
+.app .lateral { background: var(--pu-primaria); color: #fff; padding: 16px 12px;
+                display: flex; flex-direction: column; gap: 4px; }
+.app .lateral .marca { display: flex; align-items: center; gap: 10px;
+                       padding: 4px 8px 18px; font-weight: 700; font-size: 17px; }
+.app .lateral .marca img { width: 30px; height: 30px; border-radius: 8px; }
+.app .lateral a { display: flex; align-items: center; gap: 11px; padding: 10px 12px;
+  border-radius: 10px; color: rgba(255,255,255,.82); text-decoration: none;
+  font-size: 14.5px; font-weight: 500; }
+.app .lateral a:hover { background: rgba(255,255,255,.09); color: #fff; }
+.app .lateral a[aria-current="page"] { background: rgba(255,255,255,.14); color: #fff;
+                                       font-weight: 600; }
+.app .lateral .conta { margin-left: auto; }
+.app .coluna { border-right: 1px solid var(--pu-borda); display: flex;
+               flex-direction: column; min-width: 0; }
+.app .coluna .topo { padding: 14px; border-bottom: 1px solid var(--pu-borda); }
+.app .coluna .lista { flex: 1; overflow-y: auto; padding: 8px; }
+.app .conversa-aberta { display: flex; flex-direction: column; min-width: 0; }
+.app .barra { display: flex; align-items: center; gap: 12px; padding: 12px 18px;
+              border-bottom: 1px solid var(--pu-borda); }
+.app .corpo { flex: 1; overflow-y: auto; padding: 18px; background: var(--pu-fundo); }
+.app .pe { padding: 12px 16px; border-top: 1px solid var(--pu-borda); }
+@media (max-width: 900px) { .app { grid-template-columns: 1fr; height: auto; }
+                            .app .lateral, .app .coluna { display: none; } }
+
+/* ── 11 entrada ──────────────────────────────────────────────────── */
+.entrada {
+  position: relative; min-height: 460px; display: flex; align-items: center;
+  justify-content: flex-end; padding: 32px clamp(16px, 4vw, 56px);
+  border-radius: 16px; overflow: hidden;
+  background-image: url('web/marca/fundo-entrada.webp');
+  background-size: cover; background-position: center left;
+}
+/* O véu vem da direita porque é aí que o fundo tem espaço: as ondas e o
+   balão grande ocupam o canto de baixo à esquerda. */
+.entrada::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(265deg,
+    rgba(255,255,255,.92) 0%, rgba(255,255,255,.80) 34%,
+    rgba(255,255,255,.30) 58%, rgba(255,255,255,0) 78%);
+}
+.entrada-cartao {
+  position: relative; width: 100%; max-width: 390px;
+  background: #fff; border-radius: 18px; padding: 30px;
+  border-top: 3px solid var(--pu-primaria);
+  box-shadow: 0 20px 50px rgba(31,39,71,.22);
+}
+.entrada-marca { display: flex; align-items: center; gap: 13px; margin-bottom: 22px; }
+.entrada-marca img { width: 46px; height: 46px; border-radius: 12px; }
+.entrada-marca b { font-size: 20px; letter-spacing: -.02em; }
+.entrada-marca small { display: block; font-weight: 400; font-size: 12.5px;
+                       color: var(--pu-suave); margin-top: 2px; }
+
+.legenda { font-size: 13px; color: var(--pu-suave); margin-top: 14px; }
+.fila { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="env">
+
+  <header>
+    <div class="cabeca">
+      <picture>
+        <source srcset="web/marca/pu-marca.webp" type="image/webp" />
+        <img src="web/marca/pu-marca.png" alt="" width="64" height="64" />
+      </picture>
+      <h1>Pulso<small>Biblioteca visual — Prepara Portugal</small></h1>
+    </div>
+    <div class="aviso-topo">
+      Esta página não faz parte da aplicação: é só para veres e escolheres.
+      Fica no repositório porque é aqui que se confere se um botão novo
+      continua a parecer-se com os que já existem. Tudo o que está aqui sai do
+      teu kit — <b>o que acrescentei está assinalado, e sempre porque a
+      medição obrigou</b>.
+    </div>
+  </header>
+
+  <!-- ══ 01 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">01</span><h2>Paleta</h2></div>
+    <p class="nota">
+      Os seis tons são os teus. Os números por baixo de cada um são medidos
+      pelo browser nesta página, agora — não são uma opinião minha. A regra
+      que daqui sai é a mesma de todos os apps do projeto:
+      <b>uma cor clara é preenchimento, com letra escura por cima; nunca é a
+      letra</b>.
+    </p>
+    <div class="paleta" id="paleta"></div>
+
+    <div class="cartao" style="margin-top:20px">
+      <h3>As duas cores que a medição obrigou a desdobrar</h3>
+      <p class="nota" style="margin-bottom:16px">
+        O laranja e o verde do kit servem lindamente para preencher, e não
+        servem para escrever. Quando a cor <i>tem</i> de ser letra — o nome de
+        um estado, um aviso — usa-se a versão escura ao lado. É a mesma cor,
+        com contraste que passa.
+      </p>
+      <div class="grelha g2">
+        <div>
+          <div class="fila" style="margin-bottom:10px">
+            <span class="selo selo-porler"><span class="ponto"></span>3 por ler</span>
+            <span class="selo selo-online"><span class="ponto"></span>Online</span>
+          </div>
+          <p class="legenda">
+            Letra <code>#A85416</code> sobre <code>#FDF0E4</code> e
+            <code>#2A7259</code> sobre <code>#E8F5EF</code>.
+          </p>
+        </div>
+        <div>
+          <div class="fila" style="margin-bottom:10px">
+            <button class="botao botao-laranja">Chamar</button>
+            <span class="conta">3</span>
+          </div>
+          <p class="legenda">
+            O laranja do kit a preencher, com índigo por cima: 5,96:1.
+            Com branco por cima daria 2,45:1 — ilegível.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 02 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">02</span><h2>Tipografia</h2></div>
+    <p class="nota">
+      <b>Plus Jakarta Sans</b>, como no teu kit. Tem o desenho aberto que uma
+      app de conversa pede e — o que aqui conta mais — algarismos que se
+      distinguem bem: um número de telemóvel lê-se muitas vezes ao dia.
+    </p>
+    <div class="cartao">
+      <div class="tipo-linha"><span style="font:700 32px/1.15 var(--pu-fonte)">Conversas com quem trabalha consigo</span><span class="spec">H1 · 32 · 700</span></div>
+      <div class="tipo-linha"><span style="font:600 24px/1.2 var(--pu-fonte)">Grupo: Contabilidade</span><span class="spec">H2 · 24 · 600</span></div>
+      <div class="tipo-linha"><span style="font:600 18px/1.3 var(--pu-fonte)">Rita Mendes</span><span class="spec">H3 · 18 · 600</span></div>
+      <div class="tipo-linha"><span style="font:400 16px/1.55 var(--pu-fonte)">Já enviei a declaração à Segurança Social. Confirmas?</span><span class="spec">Corpo · 16 · 400</span></div>
+      <div class="tipo-linha"><span style="font:400 14px/1.5 var(--pu-fonte);color:var(--pu-suave)">ontem às 16:24 · entregue</span><span class="spec">Legenda · 14 · 400</span></div>
+      <div class="tipo-linha"><span style="font-family:ui-monospace,Menlo,monospace;font-size:16px">912 345 678 · 0123456789</span><span class="spec">números</span></div>
+    </div>
+  </section>
+
+  <!-- ══ 03 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">03</span><h2>Botões</h2></div>
+    <p class="nota">
+      Um botão cheio por ecrã, e é o índigo. O laranja é para a acção que
+      interrompe — chamar, avisar — e por isso não pode andar por todo o lado.
+    </p>
+    <div class="cartao fila">
+      <button class="botao">Enviar mensagem</button>
+      <button class="botao botao-2">Secundário</button>
+      <button class="botao botao-laranja">Chamar</button>
+      <button class="botao botao-linha">Contorno</button>
+      <button class="botao botao-fantasma">Fantasma</button>
+      <button class="botao botao-redondo" aria-label="Enviar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4z" />
+        </svg>
+      </button>
+      <button class="botao" disabled>Desligado</button>
+    </div>
+  </section>
+
+  <!-- ══ 04 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">04</span><h2>Campos</h2></div>
+    <p class="nota">
+      A caixa de escrever é a peça mais usada da app inteira. Fica redonda e
+      alta o suficiente para o dedo: 44px de alvo, que é o mínimo para não
+      falhar num telemóvel.
+    </p>
+    <div class="cartao">
+      <div class="grelha g2" style="margin-bottom:22px">
+        <div class="campo" style="margin:0">
+          <label for="d-nome">Nome</label>
+          <input id="d-nome" placeholder="O seu nome" />
+        </div>
+        <div class="campo" style="margin:0">
+          <label for="d-num">Número</label>
+          <input id="d-num" value="912 345 678" />
+        </div>
+      </div>
+
+      <div class="campo busca">
+        <label for="d-busca">Procurar</label>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" aria-hidden="true" style="top:calc(50% + 12px)">
+          <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+        </svg>
+        <input id="d-busca" placeholder="Procurar nas conversas…" />
+      </div>
+
+      <label class="campo" style="margin:0" for="d-msg">
+        <span style="display:block;font-size:14px;font-weight:500;margin-bottom:7px">Escrever</span>
+      </label>
+      <div class="escrever">
+        <button class="icone-botao" aria-label="Anexar">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7.5-7.5" />
+          </svg>
+        </button>
+        <input id="d-msg" placeholder="Escreva uma mensagem…" />
+        <button class="icone-botao enviar" aria-label="Enviar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 05 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">05</span><h2>Bolhas</h2></div>
+    <p class="nota">
+      Quem escreve fica à direita em índigo cheio; quem responde fica à
+      esquerda em cinzento claro. O canto de baixo do lado de quem fala é
+      cortado — é o que faz a bolha apontar à pessoa sem precisar de bico.
+    </p>
+    <div class="cartao">
+      <div class="fio">
+        <div class="separador-dia"><span>Ontem</span></div>
+
+        <div class="bolha-linha">
+          <span class="avatar avatar-30" style="background:#38446A">RM</span>
+          <div class="bolha bolha-dele">
+            Já entreguei a DMR de agosto. Confirmas o pagamento do boleto?
+            <span class="hora">16:24</span>
+          </div>
+        </div>
+
+        <div class="bolha-linha minha">
+          <div class="bolha bolha-minha">
+            Confirmo, paguei há bocado. Protocolo PP-2026-00012.
+            <span class="hora">16:31 · entregue</span>
+          </div>
+        </div>
+
+        <div class="bolha-linha">
+          <span class="avatar avatar-30" style="background:#38446A">RM</span>
+          <div class="bolha bolha-dele">
+            Boa. Amanhã trato do Modelo 22.
+            <span class="hora">16:33</span>
+          </div>
+        </div>
+
+        <div class="bolha-linha minha">
+          <div class="bolha bolha-apagada">Mensagem apagada</div>
+        </div>
+
+        <div class="bolha-linha">
+          <span class="avatar avatar-30" style="background:#38446A">RM</span>
+          <span class="selo selo-escreve"><span class="ponto"></span>a escrever…</span>
+        </div>
+      </div>
+      <p class="legenda">
+        A mensagem apagada deixa marca em vez de desaparecer: num fio de
+        conversa, uma linha que some deixa as respostas sem sentido.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ 06 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">06</span><h2>Lista de conversas</h2></div>
+    <p class="nota">
+      Por ler tem três sinais ao mesmo tempo — fundo, peso da letra e
+      contador. Quem não distingue cores tem de continuar a saber o que
+      ainda não leu.
+    </p>
+    <div class="cartao" style="padding:10px">
+      <button class="conversa" data-por-ler="true">
+        <span class="avatar" style="background:#38446A">RM<span class="ponto-estado online"></span></span>
+        <span style="flex:1;min-width:0">
+          <span class="quem"><span class="nome">Rita Mendes</span><span class="hora">16:33</span></span>
+          <span class="ultima" style="display:block">Amanhã trato do Modelo 22.</span>
+        </span>
+        <span class="conta">2</span>
+      </button>
+
+      <button class="conversa" aria-current="true">
+        <span class="avatar" style="background:#1F2747">CT<span class="ponto-estado online"></span></span>
+        <span style="flex:1;min-width:0">
+          <span class="quem"><span class="nome">Contabilidade</span><span class="hora">14:02</span></span>
+          <span class="ultima" style="display:block">Tiago: já mandei o SAF-T para a AT</span>
+        </span>
+        <span class="selo selo-grupo">4</span>
+      </button>
+
+      <button class="conversa">
+        <span class="avatar" style="background:#5B6483">TN<span class="ponto-estado ausente"></span></span>
+        <span style="flex:1;min-width:0">
+          <span class="quem"><span class="nome">Tiago Nunes</span><span class="hora">ontem</span></span>
+          <span class="ultima" style="display:block">Combinado, até segunda.</span>
+        </span>
+      </button>
+
+      <button class="conversa">
+        <span class="avatar" style="background:#38446A">GT</span>
+        <span style="flex:1;min-width:0">
+          <span class="quem"><span class="nome">Gerente Teste</span><span class="hora">seg</span></span>
+          <span class="ultima" style="display:block">Enviou uma imagem</span>
+        </span>
+        <span class="selo selo-calado">silenciado</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ══ 07 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">07</span><h2>Selos</h2></div>
+    <p class="nota">
+      Todos levam ponto <i>e</i> palavra. A cor sozinha nunca diz o estado.
+    </p>
+    <div class="cartao fila">
+      <span class="selo selo-online"><span class="ponto"></span>Online</span>
+      <span class="selo selo-escreve"><span class="ponto"></span>a escrever…</span>
+      <span class="selo selo-calado"><span class="ponto"></span>silenciado</span>
+      <span class="selo selo-porler"><span class="ponto"></span>3 por ler</span>
+      <span class="selo selo-grupo"><span class="ponto"></span>grupo · 4 pessoas</span>
+    </div>
+  </section>
+
+  <!-- ══ 08 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">08</span><h2>Contacto, anexo e aviso</h2></div>
+    <div class="grelha g2">
+      <div class="cartao contacto">
+        <span class="avatar" style="background:#1F2747">RM<span class="ponto-estado online"></span></span>
+        <h3>Rita Mendes</h3>
+        <p class="numero">912 345 678</p>
+        <p class="legenda" style="margin-top:6px">Contabilista · Padaria Central</p>
+        <div class="barras">
+          <div><b>18</b><span>conversas</span></div>
+          <div><b>3</b><span>grupos</span></div>
+          <div><b>PP-…011</b><span>cédula</span></div>
+        </div>
+        <button class="botao" style="width:100%">Abrir conversa</button>
+        <p class="legenda">
+          O número é o que se vê; a cédula continua a ser o que manda por baixo.
+        </p>
+      </div>
+
+      <div class="grelha" style="align-content:start">
+        <div class="cartao">
+          <h3 style="margin-bottom:14px">Anexo</h3>
+          <div class="anexo">
+            <span class="quadro"></span>
+            <span style="flex:1;min-width:0">
+              <span class="nome" style="display:block">recibo-agosto.pdf</span>
+              <span class="peso">248 KB · PDF</span>
+            </span>
+            <button class="icone-botao" style="background:transparent;border:0;cursor:pointer;color:var(--pu-suave)" aria-label="Tirar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <path d="M6 6 18 18M18 6 6 18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h3 style="margin-bottom:14px">Aviso</h3>
+          <div class="torrada">
+            <span class="sino">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" />
+              </svg>
+            </span>
+            <span>
+              <b style="display:block;font-size:14.5px">Mensagem nova</b>
+              <span style="font-size:13.5px;color:var(--pu-suave)">Rita Mendes: amanhã trato do Modelo 22.</span>
+            </span>
+            <span class="hora" style="font-size:12px;color:var(--pu-suave)">agora</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">09</span><h2>A app montada</h2></div>
+    <p class="nota">
+      Três colunas: as secções, as conversas e o fio aberto. Num telemóvel
+      colapsa para uma de cada vez — as duas primeiras estão escondidas aqui
+      em baixo dos 900px, e é por isso que esta caixa muda se estreitares a
+      janela.
+    </p>
+    <div class="app">
+      <aside class="lateral">
+        <div class="marca">
+          <picture>
+            <source srcset="web/marca/pu-marca.webp" type="image/webp" />
+            <img src="web/marca/pu-marca.png" alt="" width="30" height="30" />
+          </picture>
+          Pulso
+        </div>
+        <a href="#" aria-current="page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>
+          Conversas <span class="conta">3</span>
+        </a>
+        <a href="#">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 19a6.5 6.5 0 0 1 13 0"/><path d="M17 6.2a3.2 3.2 0 0 1 0 6.1M18.5 19a6 6 0 0 0-3-5.2"/></svg>
+          Grupos
+        </a>
+        <a href="#">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          Contactos
+        </a>
+      </aside>
+
+      <div class="coluna">
+        <div class="topo">
+          <div class="campo busca" style="margin:0">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input placeholder="Procurar…" aria-label="Procurar" />
+          </div>
+        </div>
+        <div class="lista">
+          <button class="conversa" data-por-ler="true">
+            <span class="avatar" style="background:#38446A">RM<span class="ponto-estado online"></span></span>
+            <span style="flex:1;min-width:0">
+              <span class="quem"><span class="nome">Rita Mendes</span><span class="hora">16:33</span></span>
+              <span class="ultima" style="display:block">Amanhã trato do Modelo 22.</span>
+            </span>
+            <span class="conta">2</span>
+          </button>
+          <button class="conversa" aria-current="true">
+            <span class="avatar" style="background:#1F2747">CT</span>
+            <span style="flex:1;min-width:0">
+              <span class="quem"><span class="nome">Contabilidade</span><span class="hora">14:02</span></span>
+              <span class="ultima" style="display:block">Tiago: já mandei o SAF-T</span>
+            </span>
+          </button>
+          <button class="conversa">
+            <span class="avatar" style="background:#5B6483">TN<span class="ponto-estado ausente"></span></span>
+            <span style="flex:1;min-width:0">
+              <span class="quem"><span class="nome">Tiago Nunes</span><span class="hora">ontem</span></span>
+              <span class="ultima" style="display:block">Combinado, até segunda.</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="conversa-aberta">
+        <div class="barra">
+          <span class="avatar avatar-30" style="background:#1F2747">CT</span>
+          <span style="flex:1;min-width:0">
+            <b style="display:block;font-size:15px">Contabilidade</b>
+            <span style="font-size:12.5px;color:var(--pu-suave)">Germano, Rita, Tiago e mais 1</span>
+          </span>
+          <span class="selo selo-online"><span class="ponto"></span>2 online</span>
+        </div>
+        <div class="corpo">
+          <div class="fio">
+            <div class="separador-dia"><span>Hoje</span></div>
+            <div class="bolha-linha">
+              <span class="avatar avatar-30" style="background:#5B6483">TN</span>
+              <div class="bolha bolha-dele">
+                Já mandei o SAF-T de agosto para a AT.
+                <span class="hora">14:02</span>
+              </div>
+            </div>
+            <div class="bolha-linha minha">
+              <div class="bolha bolha-minha">
+                Perfeito. Falta o boleto do IVA?
+                <span class="hora">14:05 · entregue</span>
+              </div>
+            </div>
+            <div class="bolha-linha">
+              <span class="avatar avatar-30" style="background:#38446A">RM</span>
+              <div class="bolha bolha-dele">
+                Pago. Protocolo emitido.
+                <span class="hora">14:09</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pe">
+          <div class="escrever">
+            <button class="icone-botao" aria-label="Anexar">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7.5-7.5"/></svg>
+            </button>
+            <input placeholder="Escreva uma mensagem…" aria-label="Escrever" />
+            <button class="icone-botao enviar" aria-label="Enviar">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10 ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <div class="rotulo"><span class="num">10</span><h2>Entrada</h2></div>
+    <p class="nota">
+      O cartão assenta à direita porque é aí que o teu fundo tem espaço: as
+      ondas índigo e o balão grande ocupam o canto de baixo à esquerda. Num
+      telemóvel o fundo sai e fica só o cartão — uma fotografia de 1670px
+      atrás de um formulário é peso que ninguém vê.
+    </p>
+    <div class="entrada">
+      <div class="entrada-cartao">
+        <div class="entrada-marca">
+          <picture>
+            <source srcset="web/marca/pu-marca.webp" type="image/webp" />
+            <img src="web/marca/pu-marca.png" alt="" width="46" height="46" />
+          </picture>
+          <span><b>Pulso</b><small>Prepara Portugal</small></span>
+        </div>
+        <h2 style="margin-bottom:8px">Entrar</h2>
+        <p style="font-size:14.5px;color:var(--pu-suave);margin-bottom:20px">
+          O canal rápido do ecossistema. Para o que é formal e fica registado,
+          use o AeroMail.
+        </p>
+        <div class="campo">
+          <label for="d-email">Email de login</label>
+          <input id="d-email" type="email" placeholder="nome@prepara.pt" />
+        </div>
+        <div class="campo">
+          <label for="d-senha">Senha</label>
+          <input id="d-senha" type="password" placeholder="A sua senha" />
+        </div>
+        <button class="botao" style="width:100%">Entrar</button>
+        <p class="legenda">Esqueceu-se da senha? Peça ao professor para a repor.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid var(--pu-borda);padding-top:24px;color:var(--pu-suave);font-size:14px">
+    Pulso · Prepara Portugal · a biblioteca não é a app — é o sítio onde se
+    confere se a app continua a parecer-se consigo mesma.
+  </footer>
+</div>
+
+<script>
+// A paleta mede-se aqui, no browser, e não numa folha de cálculo à parte:
+// se um dia alguém trocar um hex, o número ao lado muda sozinho e denuncia.
+const CORES = [
+  ['Primary Indigo',   '#1F2747', 'do kit'],
+  ['Secondary Slate',  '#38446A', 'do kit'],
+  ['Accent Orange',    '#F28C38', 'do kit'],
+  ['Online Green',     '#67C7A5', 'do kit'],
+  ['Background',       '#F5F6FB', 'do kit'],
+  ['Muted Gray',       '#D9DEEA', 'do kit'],
+  ['Laranja p/ letra', '#A85416', 'acrescentado'],
+  ['Verde p/ letra',   '#2A7259', 'acrescentado'],
+];
+
+function luminancia(hex) {
+  const c = [1, 3, 5].map((i) => parseInt(hex.substr(i, 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function contraste(a, b) {
+  const l1 = luminancia(a), l2 = luminancia(b);
+  const [x, y] = l1 > l2 ? [l1, l2] : [l2, l1];
+  return (x + 0.05) / (y + 0.05);
+}
+function marca(v) {
+  const n = v.toFixed(2) + ':1';
+  return v >= 4.5 ? `<span class="passa">${n} ✓</span>`
+                  : `<span class="falha">${n} ✗</span>`;
+}
+
+document.getElementById('paleta').innerHTML = CORES.map(([nome, hex, origem]) => {
+  const comoLetra = contraste(hex, '#FFFFFF');       // a cor a escrever em branco
+  const brancoEmCima = contraste('#FFFFFF', hex);    // branco por cima da cor
+  const escuroEmCima = contraste('#1F2747', hex);    // índigo por cima da cor
+  const claro = luminancia(hex) > 0.4;
+  return `
+    <div class="cor">
+      <div class="amostra" style="background:${hex};color:${claro ? '#1F2747' : '#fff'}">
+        ${claro ? 'texto escuro' : 'texto branco'}
+      </div>
+      <div class="info">
+        <div class="nome">${nome}</div>
+        <div class="hex">${hex}${origem === 'acrescentado' ? ' · acrescentado' : ''}</div>
+        <div class="medida">
+          como letra: ${marca(comoLetra)}<br />
+          branco por cima: ${marca(brancoEmCima)}<br />
+          índigo por cima: ${marca(escuroEmCima)}
+        </div>
+      </div>
+    </div>`;
+}).join('');
+</script>
+</body>
+</html>
