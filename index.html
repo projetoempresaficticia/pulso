@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="pu-versao" content="2cc40888a515" />
+  <meta name="pu-versao" content="736d7db00fe5" />
   <title>Pulso</title>
   <link rel="icon" href="favicon-32.png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -11,46 +11,228 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body {
-    margin: 0; min-height: 100svh; display: grid; place-items: center;
-    padding: 32px; background: #F5F6FB; color: #1F2747;
-    font: 400 16px/1.55 "Plus Jakarta Sans", system-ui, sans-serif;
-  }
-  .cartao {
-    max-width: 460px; background: #fff; border: 1px solid #D9DEEA;
-    border-radius: 18px; padding: 32px; text-align: center;
-    box-shadow: 0 10px 30px rgba(31,39,71,.08);
-  }
-  img { width: 72px; height: 72px; border-radius: 18px; }
-  h1 { font-size: 28px; margin: 18px 0 10px; letter-spacing: -.02em; }
-  p { margin: 0 0 22px; color: #5B6483; font-size: 15px; }
-  a {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: 46px; padding: 0 24px; border-radius: 12px;
-    background: #1F2747; color: #fff; text-decoration: none;
-    font-weight: 600; font-size: 15px;
-  }
-  a:hover { background: #151B33; }
-  small { display: block; margin-top: 20px; color: #5B6483; font-size: 13px; }
-</style>
+  <link rel="stylesheet" href="web/biblioteca/pu.css?v=6855e1ee" />
 </head>
 <body>
-  <div class="cartao">
-    <picture>
-      <source srcset="web/marca/pu-marca.webp" type="image/webp" />
-      <img src="web/marca/pu-marca.png" alt="" width="72" height="72" />
-    </picture>
-    <h1>Pulso</h1>
-    <p>
-      O canal rápido do ecossistema Prepara Portugal.
-      A aplicação ainda está a ser construída — por agora há a biblioteca
-      visual, que é onde se decide como ela vai ser.
-    </p>
-    <a href="biblioteca.html">Ver a biblioteca</a>
-    <small>Esta página desaparece quando a app ocupar o lugar dela.</small>
+
+  <!-- ══ ENTRADA ═══════════════════════════════════════════════════════ -->
+  <div id="area-entrada" class="pu-entrada" hidden>
+    <div class="pu-entrada-cartao">
+      <div class="pu-entrada-marca">
+        <picture>
+          <source srcset="web/marca/pu-marca.webp" type="image/webp" />
+          <img src="web/marca/pu-marca.png" alt="" width="46" height="46" />
+        </picture>
+        <span><b>Pulso</b><small>Prepara Portugal</small></span>
+      </div>
+
+      <h1>Entrar</h1>
+      <p class="pu-suave" style="font-size:14.5px;margin:8px 0 20px">
+        O canal rápido do ecossistema. Para o que é formal e fica registado,
+        use o AeroMail.
+      </p>
+
+      <form id="form-login">
+        <div class="pu-campo">
+          <label for="email">Email de login</label>
+          <input id="email" type="email" required autocomplete="username"
+                 placeholder="nome@prepara.pt" />
+        </div>
+
+        <div class="pu-campo pu-campo-senha">
+          <label for="senha">Senha</label>
+          <input id="senha" type="password" required autocomplete="current-password"
+                 placeholder="A sua senha" />
+          <button type="button" class="pu-ver-senha" id="btn-ver-senha"
+                  aria-pressed="false" aria-controls="senha">Mostrar</button>
+        </div>
+
+        <button type="submit" class="pu-botao" style="width:100%">
+          <span class="pu-icone i-enviar" aria-hidden="true"></span>Entrar
+        </button>
+        <p class="pu-msg" id="msg-login"></p>
+      </form>
+
+      <p class="pu-ajuda">Esqueceu-se da senha? Peça ao professor para a repor.</p>
+    </div>
   </div>
+
+  <!-- ══ APLICAÇÃO ═════════════════════════════════════════════════════ -->
+  <div id="area-app" class="pu-app" hidden>
+
+    <aside class="pu-lateral">
+      <div class="pu-marca">
+        <picture>
+          <source srcset="web/marca/pu-marca.webp" type="image/webp" />
+          <img src="web/marca/pu-marca.png" alt="" width="32" height="32" />
+        </picture>
+        <b>Pulso</b>
+      </div>
+
+      <nav aria-label="Secções">
+        <button type="button" class="pu-nav" data-vista="todas" aria-current="true">
+          <span class="pu-icone i-conversas" aria-hidden="true"></span>
+          Conversas
+          <span class="pu-conta" id="conta-todas"></span>
+        </button>
+        <button type="button" class="pu-nav" data-vista="grupos">
+          <span class="pu-icone i-grupos" aria-hidden="true"></span>
+          Grupos
+        </button>
+        <button type="button" class="pu-nav" data-vista="contactos">
+          <span class="pu-icone i-contactos" aria-hidden="true"></span>
+          Contactos
+        </button>
+      </nav>
+
+      <div class="pu-empurra"></div>
+      <hr />
+      <div class="pu-eu">
+        <b id="nome-quem">—</b>
+        <span class="mono" id="numero-quem"></span>
+      </div>
+      <button type="button" class="pu-nav" id="btn-sair">
+        <span class="pu-icone i-sair" aria-hidden="true"></span>Sair
+      </button>
+    </aside>
+
+    <!-- coluna do meio ─────────────────────────────────────────────── -->
+    <section class="pu-coluna" aria-label="Conversas">
+      <div class="pu-coluna-topo">
+        <div class="pu-fila" style="justify-content:space-between;margin-bottom:12px">
+          <h2 id="titulo-vista">Conversas</h2>
+          <button type="button" class="pu-icone-botao" id="btn-nova"
+                  title="Nova conversa" aria-label="Nova conversa"
+                  style="background:var(--pu-primaria);color:#fff">
+            <span class="pu-icone i-mais" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="pu-campo pu-busca" style="margin:0">
+          <label class="pu-so-leitores" for="procura">Procurar</label>
+          <span class="lupa i-procurar" aria-hidden="true"></span>
+          <input id="procura" type="search" placeholder="Procurar conversa, nome ou número" />
+        </div>
+        <p class="pu-msg" id="msg-geral"></p>
+      </div>
+      <div class="pu-rolavel pu-lista" id="lista"></div>
+    </section>
+
+    <!-- o fio ──────────────────────────────────────────────────────── -->
+    <section class="pu-fio-ecra" id="fio-ecra" aria-label="Conversa">
+      <p class="pu-vazio" id="fio-vazio">Escolha uma conversa para a ler.</p>
+
+      <div id="fio-conteudo" hidden style="display:contents">
+        <div class="pu-barra">
+          <button type="button" class="pu-icone-botao pu-voltar" id="btn-voltar"
+                  aria-label="Voltar à lista">
+            <span class="pu-icone i-voltar" aria-hidden="true"></span>
+          </button>
+          <span id="fio-avatar"></span>
+          <span class="titulo">
+            <b id="fio-nome">—</b>
+            <span id="fio-sub"></span>
+          </span>
+          <button type="button" class="pu-icone-botao" id="btn-detalhes"
+                  title="Detalhes da conversa" aria-label="Detalhes da conversa">
+            <span class="pu-icone i-mais-opcoes" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="pu-corpo" id="corpo">
+          <div class="pu-fio" id="fio"></div>
+        </div>
+
+        <div class="pu-pe">
+          <form id="form-enviar" class="pu-escrever">
+            <label class="pu-so-leitores" for="texto">Escrever</label>
+            <textarea id="texto" rows="1" maxlength="4000"
+                      placeholder="Escreva uma mensagem…"></textarea>
+            <button type="submit" class="pu-icone-botao enviar" id="btn-enviar"
+                    aria-label="Enviar">
+              <span class="pu-icone pu-icone-16 i-enviar" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ══ NOVA CONVERSA ═════════════════════════════════════════════════ -->
+  <dialog id="janela-nova" aria-labelledby="titulo-nova">
+    <div class="pu-janela-cabeca">
+      <h2 id="titulo-nova">Nova conversa</h2>
+      <button type="button" class="pu-icone-botao" data-fechar="janela-nova"
+              aria-label="Fechar">
+        <span class="pu-icone i-fechar" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="pu-janela-corpo">
+      <div class="pu-fila" style="gap:8px;margin-bottom:18px">
+        <button type="button" class="pu-botao pu-botao-linha" id="aba-pessoa"
+                aria-pressed="true">Uma pessoa</button>
+        <button type="button" class="pu-botao pu-botao-linha" id="aba-grupo"
+                aria-pressed="false">Um grupo</button>
+      </div>
+
+      <div class="pu-campo" id="campo-nome-grupo" hidden>
+        <label for="nome-grupo">Nome do grupo</label>
+        <input id="nome-grupo" maxlength="60" autocomplete="off"
+               placeholder="Contabilidade, Fecho de agosto…" />
+      </div>
+
+      <div class="pu-campo pu-busca">
+        <label for="procura-pessoas">Procurar pessoa</label>
+        <span class="lupa i-procurar" aria-hidden="true"
+              style="top:calc(50% + 11px)"></span>
+        <input id="procura-pessoas" type="search" autocomplete="off"
+               placeholder="Nome, cédula ou número" />
+      </div>
+
+      <div class="pu-pessoas" id="pessoas"></div>
+      <p class="pu-msg" id="msg-nova"></p>
+    </div>
+
+    <div class="pu-janela-pe">
+      <button type="button" class="pu-botao pu-botao-linha" data-fechar="janela-nova">
+        Cancelar
+      </button>
+      <button type="button" class="pu-botao" id="btn-criar-grupo" hidden disabled>
+        Criar grupo
+      </button>
+    </div>
+  </dialog>
+
+  <!-- ══ DETALHES DA CONVERSA ══════════════════════════════════════════ -->
+  <dialog id="janela-detalhes" aria-labelledby="titulo-detalhes">
+    <div class="pu-janela-cabeca">
+      <h2 id="titulo-detalhes">Detalhes</h2>
+      <button type="button" class="pu-icone-botao" data-fechar="janela-detalhes"
+              aria-label="Fechar">
+        <span class="pu-icone i-fechar" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="pu-janela-corpo" id="detalhes-corpo"></div>
+    <div class="pu-janela-pe" id="detalhes-pe"></div>
+  </dialog>
+
+  <!-- ══ CONFIRMAR ═════════════════════════════════════════════════════ -->
+  <dialog id="janela-confirmar" aria-labelledby="titulo-confirmar">
+    <div class="pu-janela-cabeca">
+      <h2 id="titulo-confirmar">Confirmar</h2>
+    </div>
+    <div class="pu-janela-corpo"><p id="texto-confirmar"></p></div>
+    <div class="pu-janela-pe">
+      <button type="button" class="pu-botao pu-botao-linha"
+              data-fechar="janela-confirmar">Cancelar</button>
+      <button type="button" class="pu-botao" id="btn-confirmar">Confirmar</button>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://projetoempresaficticia.github.io/pp-base/web/comum.js"></script>
+  <script src="web/biblioteca/pu.js?v=b198d4eb"></script>
   <script src="web/atualizar.js?v=55eb734e"></script>
+  <script src="app.js?v=2fb3a074"></script>
 </body>
 </html>

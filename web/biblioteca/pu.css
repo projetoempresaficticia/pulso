@@ -1,0 +1,404 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PULSO — folha de estilos da aplicação
+   A paleta é a do kit. As duas cores acrescentadas — o laranja e o verde
+   em versão escura — existem porque as do kit dão 2,45:1 e 2,04:1 como
+   letra: são preenchimento, nunca escrita. Ver biblioteca.html, secção 01.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --pu-primaria:   #1F2747;
+  --pu-secundaria: #38446A;
+  --pu-laranja:    #F28C38;   /* preenchimento; letra índigo por cima */
+  --pu-verde:      #67C7A5;   /* idem */
+  --pu-fundo:      #F5F6FB;
+  --pu-cinza:      #D9DEEA;
+
+  --pu-laranja-texto: #A85416;   /* 5,32:1 */
+  --pu-verde-texto:   #2A7259;   /* 5,75:1 */
+  --pu-laranja-veu:   #FDF0E4;
+  --pu-verde-veu:     #E8F5EF;
+  --pu-veu:           #EEF0F7;
+
+  --pu-superficie: #FFFFFF;
+  --pu-tinta:      #1F2747;
+  --pu-suave:      #5B6483;   /* 5,84:1 sobre branco */
+  --pu-dica:       #67718F;   /* 4,84:1 — o mínimo para um placeholder */
+  --pu-borda:      #D9DEEA;
+  --pu-erro:       #B3261E;
+
+  --pu-e1: 4px; --pu-e2: 8px; --pu-e3: 12px; --pu-e4: 16px;
+  --pu-e5: 24px; --pu-e6: 32px;
+  --pu-r: 12px; --pu-r-balao: 18px;
+  --pu-fonte: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pu-sombra: 0 1px 2px rgba(31,39,71,.05), 0 10px 30px rgba(31,39,71,.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Rede de segurança: qualquer regra de autor com `display` vence o
+   atributo [hidden] nativo. Já aconteceu três vezes noutros apps. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0; background: var(--pu-fundo); color: var(--pu-tinta);
+  font: 400 16px/1.55 var(--pu-fonte); -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { margin: 0; letter-spacing: -.02em; }
+h1 { font-size: 28px; font-weight: 700; line-height: 1.15; }
+h2 { font-size: 20px; font-weight: 600; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-variant-numeric: tabular-nums; }
+.pu-suave { color: var(--pu-suave); }
+.pu-fila { display: flex; align-items: center; gap: var(--pu-e3); flex-wrap: wrap; }
+.pu-vazio { color: var(--pu-suave); font-size: 14.5px; text-align: center;
+            padding: var(--pu-e6) var(--pu-e5); }
+.pu-ajuda { font-size: 13px; color: var(--pu-suave); margin-top: var(--pu-e3); }
+.pu-so-leitores {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ── botões ───────────────────────────────────────────────────────── */
+.pu-botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--pu-e2);
+  min-height: 44px; padding: 0 22px; border: 1.5px solid transparent;
+  border-radius: var(--pu-r); font: 600 15px/1 var(--pu-fonte);
+  cursor: pointer; background: var(--pu-primaria); color: #fff;
+  text-decoration: none; transition: background 120ms ease, border-color 120ms ease;
+}
+.pu-botao:hover { background: #151B33; }
+.pu-botao-linha { background: transparent; color: var(--pu-primaria);
+                  border-color: var(--pu-borda); }
+.pu-botao-linha:hover { border-color: var(--pu-primaria); background: var(--pu-veu); }
+.pu-botao-fantasma { background: transparent; color: var(--pu-primaria); }
+.pu-botao-fantasma:hover { background: var(--pu-veu); }
+/* Sem opacity: ela esbate o botão inteiro e o branco caía para 2,67:1. */
+.pu-botao:disabled {
+  background: var(--pu-cinza); color: var(--pu-secundaria);
+  border-color: transparent; cursor: not-allowed;
+}
+.pu-botao:focus-visible { outline: 2px solid var(--pu-primaria); outline-offset: 2px; }
+
+.pu-icone-botao {
+  display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0;
+  border: 0; border-radius: 50%; background: transparent;
+  color: var(--pu-suave); cursor: pointer;
+}
+.pu-icone-botao:hover { background: var(--pu-veu); color: var(--pu-primaria); }
+.pu-icone-botao:focus-visible { outline: 2px solid var(--pu-primaria); outline-offset: 1px; }
+
+/* ── campos ───────────────────────────────────────────────────────── */
+.pu-campo { margin-bottom: var(--pu-e4); }
+.pu-campo label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 7px; }
+.pu-campo input, .pu-campo textarea, .pu-campo select {
+  width: 100%; min-height: 46px; padding: 12px 16px;
+  font: 400 15px/1.5 var(--pu-fonte); color: var(--pu-tinta);
+  background: #fff; border: 1.5px solid var(--pu-borda); border-radius: var(--pu-r);
+}
+.pu-campo input::placeholder, .pu-campo textarea::placeholder,
+.pu-escrever input::placeholder { color: var(--pu-dica); opacity: 1; }
+.pu-campo input:focus, .pu-campo textarea:focus, .pu-campo select:focus {
+  outline: none; border-color: var(--pu-primaria);
+  box-shadow: 0 0 0 3px rgba(31,39,71,.14);
+}
+.pu-busca { position: relative; }
+.pu-busca input { padding-left: 42px; }
+.pu-busca .lupa {
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  width: 17px; height: 17px; background: var(--pu-suave); pointer-events: none;
+  -webkit-mask: var(--i) center/contain no-repeat; mask: var(--i) center/contain no-repeat;
+}
+
+.pu-msg { margin-top: var(--pu-e3); font-size: 13.5px; }
+.pu-msg:empty { display: none; }
+.pu-msg-erro { color: var(--pu-erro); }
+.pu-msg-aviso { color: var(--pu-laranja-texto); }
+.pu-msg-ok { color: var(--pu-verde-texto); }
+
+/* ── ícones ────────────────────────────────────────────────────────
+   Máscaras pintadas com currentColor: um SVG dentro de <img> não herda a
+   cor do texto. O url() resolve a partir DESTE ficheiro, não do HTML. */
+.pu-icone {
+  display: inline-block; width: 20px; height: 20px; flex-shrink: 0;
+  vertical-align: -4px; background-color: currentColor;
+  -webkit-mask: var(--i) center / contain no-repeat;
+          mask: var(--i) center / contain no-repeat;
+}
+.pu-icone-16 { width: 16px; height: 16px; vertical-align: -3px; }
+
+.i-conversas { --i: url(../icones/conversas.svg); }
+.i-grupos    { --i: url(../icones/grupos.svg); }
+.i-contactos { --i: url(../icones/contacto.svg); }
+.i-procurar  { --i: url(../icones/procurar.svg); }
+.i-enviar    { --i: url(../icones/enviar.svg); }
+.i-mais      { --i: url(../icones/mais.svg); }
+.i-fechar    { --i: url(../icones/fechar.svg); }
+.i-voltar    { --i: url(../icones/voltar.svg); }
+.i-sair      { --i: url(../icones/sair.svg); }
+.i-lixo      { --i: url(../icones/lixo.svg); }
+.i-mais-opcoes { --i: url(../icones/mais-opcoes.svg); }
+.i-info      { --i: url(../icones/info.svg); }
+
+/* ── avatar ───────────────────────────────────────────────────────── */
+.pu-avatar {
+  width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+  color: #fff; font-weight: 600; font-size: 14.5px; flex-shrink: 0; position: relative;
+}
+.pu-avatar-30 { width: 30px; height: 30px; font-size: 12px; }
+.pu-avatar-64 { width: 64px; height: 64px; font-size: 22px; }
+
+/* ── o esqueleto ───────────────────────────────────────────────────
+   Três colunas: as secções, as conversas e o fio aberto. */
+.pu-app {
+  display: grid;
+  grid-template-columns: 210px minmax(280px, 340px) minmax(0, 1fr);
+  height: 100svh;
+}
+
+.pu-lateral {
+  background: var(--pu-primaria); color: #fff; padding: var(--pu-e4) var(--pu-e3);
+  display: flex; flex-direction: column; gap: 2px; overflow-y: auto;
+}
+.pu-marca { display: flex; align-items: center; gap: var(--pu-e3);
+            padding: var(--pu-e1) var(--pu-e2) var(--pu-e5); }
+.pu-marca img { width: 32px; height: 32px; border-radius: 9px; display: block; }
+.pu-marca b { font-size: 18px; letter-spacing: -.02em; }
+.pu-lateral .pu-nav {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 10px 12px; border: 0; border-radius: 10px; background: transparent;
+  /* 82% de branco sobre o índigo dá 10,26:1 — medido */
+  color: rgba(255,255,255,.82); text-align: left; cursor: pointer;
+  font: 500 14.5px/1 var(--pu-fonte);
+}
+.pu-lateral .pu-nav:hover { background: rgba(255,255,255,.09); color: #fff; }
+.pu-lateral .pu-nav[aria-current="true"] {
+  background: rgba(255,255,255,.14); color: #fff; font-weight: 600;
+}
+.pu-lateral hr { border: 0; border-top: 1px solid rgba(255,255,255,.14);
+                 margin: var(--pu-e4) var(--pu-e2); width: calc(100% - 16px); }
+.pu-empurra { margin-top: auto; }
+.pu-eu { padding: var(--pu-e2); }
+.pu-eu b { display: block; font-size: 14px; }
+.pu-eu span { font-size: 12.5px; color: rgba(255,255,255,.75); }
+
+/* O contador: laranja cheio com letra índigo. Com branco daria 2,45:1 e
+   um número que não se lê não conta nada. */
+.pu-conta {
+  min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px;
+  background: var(--pu-laranja); color: var(--pu-primaria);
+  font-size: 12px; font-weight: 700; display: grid; place-items: center;
+  margin-left: auto; flex-shrink: 0;
+}
+.pu-conta:empty { display: none; }
+
+.pu-coluna {
+  background: var(--pu-superficie); border-right: 1px solid var(--pu-borda);
+  display: flex; flex-direction: column; min-width: 0;
+}
+.pu-coluna-topo { padding: var(--pu-e4); border-bottom: 1px solid var(--pu-borda); }
+.pu-rolavel { flex: 1; overflow-y: auto; min-height: 0; }
+.pu-lista { padding: var(--pu-e2); }
+
+/* ── linha de conversa ────────────────────────────────────────────── */
+.pu-conversa {
+  display: flex; align-items: flex-start; gap: var(--pu-e3); width: 100%;
+  padding: var(--pu-e3) var(--pu-e3); border: 0; border-radius: var(--pu-r);
+  background: transparent; text-align: left; font: inherit; color: inherit;
+  cursor: pointer;
+}
+.pu-conversa:hover { background: var(--pu-fundo); }
+.pu-conversa[aria-current="true"] { background: var(--pu-veu); }
+.pu-conversa .quem { display: flex; justify-content: space-between; gap: var(--pu-e2); }
+.pu-conversa .nome { font-size: 15px; font-weight: 600; }
+.pu-conversa .hora { font-size: 12px; color: var(--pu-suave); white-space: nowrap; }
+.pu-conversa .ultima {
+  display: block; font-size: 13.5px; color: var(--pu-suave); margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Por ler tem fundo, peso E contador: três sinais, não só a cor. */
+.pu-conversa[data-por-ler="true"] { background: var(--pu-veu); }
+.pu-conversa[data-por-ler="true"] .nome,
+.pu-conversa[data-por-ler="true"] .ultima { font-weight: 700; color: var(--pu-tinta); }
+
+/* ── o fio ────────────────────────────────────────────────────────── */
+.pu-fio-ecra { display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+               background: var(--pu-fundo); }
+.pu-barra {
+  display: flex; align-items: center; gap: var(--pu-e3);
+  padding: var(--pu-e3) var(--pu-e4); background: var(--pu-superficie);
+  border-bottom: 1px solid var(--pu-borda);
+}
+.pu-barra .titulo { flex: 1; min-width: 0; }
+.pu-barra .titulo b { display: block; font-size: 15.5px; }
+.pu-barra .titulo span { font-size: 12.5px; color: var(--pu-suave); }
+
+.pu-corpo { flex: 1; overflow-y: auto; padding: var(--pu-e5); min-height: 0; }
+.pu-fio { display: flex; flex-direction: column; gap: var(--pu-e3); }
+
+.pu-dia { text-align: center; margin: var(--pu-e2) 0; }
+.pu-dia span {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  background: var(--pu-veu); color: var(--pu-suave); font-size: 12.5px; font-weight: 500;
+}
+
+.pu-linha { display: flex; align-items: flex-end; gap: 10px; }
+.pu-linha.minha { flex-direction: row-reverse; }
+.pu-balao {
+  position: relative; max-width: min(74%, 560px); padding: 11px 15px;
+  border-radius: var(--pu-r-balao); font-size: 15px; line-height: 1.5;
+  overflow-wrap: anywhere; white-space: pre-wrap;
+}
+.pu-balao .hora { display: block; margin-top: 5px; font-size: 11.5px; opacity: .78; }
+.pu-balao .autor { display: block; font-size: 12.5px; font-weight: 700;
+                   margin-bottom: 3px; color: var(--pu-secundaria); }
+.pu-dele { background: var(--pu-veu); color: var(--pu-tinta);
+           border-bottom-left-radius: 6px; }
+.pu-minha { background: var(--pu-primaria); color: #fff;
+            border-bottom-right-radius: 6px; }
+.pu-minha .autor { color: rgba(255,255,255,.85); }
+/* Uma mensagem apagada deixa marca em vez de desaparecer: num fio, uma
+   linha que some deixa as respostas seguintes sem sentido. */
+.pu-apagada {
+  background: transparent; border: 1.5px dashed var(--pu-borda);
+  color: var(--pu-suave); font-style: italic;
+}
+
+.pu-apagar-balao {
+  position: absolute; top: 2px; right: 4px; width: 24px; height: 24px;
+  display: grid; place-items: center; border: 0; border-radius: 50%;
+  background: transparent; color: inherit; opacity: 0; cursor: pointer;
+}
+.pu-linha:hover .pu-apagar-balao,
+.pu-apagar-balao:focus-visible { opacity: .8; }
+.pu-apagar-balao:hover { background: rgba(127,127,127,.18); opacity: 1; }
+.pu-minha .pu-balao { padding-right: 30px; }
+@media (hover: none) { .pu-apagar-balao { opacity: .6; } }
+
+/* ── escrever ─────────────────────────────────────────────────────── */
+.pu-pe { padding: var(--pu-e3) var(--pu-e4); background: var(--pu-superficie);
+         border-top: 1px solid var(--pu-borda); }
+.pu-escrever {
+  display: flex; align-items: flex-end; gap: 10px; padding: 7px;
+  background: #fff; border: 1.5px solid var(--pu-borda); border-radius: 24px;
+}
+.pu-escrever:focus-within { border-color: var(--pu-primaria);
+                            box-shadow: 0 0 0 3px rgba(31,39,71,.14); }
+.pu-escrever textarea {
+  flex: 1; min-width: 0; border: 0; outline: none; background: transparent; resize: none;
+  font: 400 15px/1.5 var(--pu-fonte); color: var(--pu-tinta);
+  padding: 8px 6px; max-height: 132px; overflow-y: auto;
+}
+.pu-escrever textarea::placeholder { color: var(--pu-dica); opacity: 1; }
+.pu-escrever .enviar { background: var(--pu-primaria); color: #fff; width: 40px; height: 40px; }
+.pu-escrever .enviar:hover { background: #151B33; }
+.pu-escrever .enviar:disabled { background: var(--pu-cinza); color: var(--pu-secundaria);
+                                cursor: not-allowed; }
+
+/* ── selos ────────────────────────────────────────────────────────── */
+.pu-selo { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px;
+           border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+.pu-selo .ponto { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pu-selo-grupo  { background: var(--pu-veu); color: var(--pu-secundaria); }
+.pu-selo-porler { background: var(--pu-laranja-veu); color: var(--pu-laranja-texto); }
+.pu-selo-ok     { background: var(--pu-verde-veu); color: var(--pu-verde-texto); }
+
+/* ── janelas ──────────────────────────────────────────────────────── */
+dialog {
+  border: 0; border-radius: 18px; padding: 0; max-width: 520px;
+  width: calc(100% - var(--pu-e5) * 2); background: var(--pu-superficie);
+  color: var(--pu-tinta); box-shadow: 0 24px 60px rgba(31,39,71,.3);
+}
+dialog::backdrop { background: rgba(31,39,71,.45); }
+.pu-janela-cabeca {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--pu-e4);
+  padding: var(--pu-e4) var(--pu-e5); border-bottom: 1px solid var(--pu-borda);
+}
+.pu-janela-corpo { padding: var(--pu-e5); max-height: 66svh; overflow-y: auto; }
+.pu-janela-pe {
+  display: flex; justify-content: flex-end; gap: var(--pu-e3); flex-wrap: wrap;
+  padding: var(--pu-e4) var(--pu-e5); border-top: 1px solid var(--pu-borda);
+}
+
+/* lista de pessoas, na escolha de contacto e na de membros */
+.pu-pessoas { display: flex; flex-direction: column; gap: var(--pu-e2); }
+.pu-pessoa {
+  display: flex; align-items: center; gap: var(--pu-e3); width: 100%;
+  padding: 10px var(--pu-e3); border: 1px solid var(--pu-borda);
+  border-radius: var(--pu-r); background: #fff; text-align: left;
+  font: inherit; color: inherit; cursor: pointer;
+}
+.pu-pessoa:hover { background: var(--pu-veu); border-color: var(--pu-primaria); }
+.pu-pessoa[aria-pressed="true"] {
+  background: var(--pu-veu); border-color: var(--pu-primaria);
+}
+.pu-pessoa .nome { font-size: 14.5px; font-weight: 600; display: block; }
+.pu-pessoa .sub { font-size: 12.5px; color: var(--pu-suave); }
+.pu-pessoa .marca-escolhido { margin-left: auto; color: var(--pu-primaria);
+                              font-weight: 700; font-size: 13px; }
+
+/* ── entrada ──────────────────────────────────────────────────────── */
+.pu-entrada {
+  position: relative; min-height: 100svh; display: flex; align-items: center;
+  justify-content: flex-end; padding: clamp(24px, 5vh, 64px) clamp(16px, 4vw, 56px);
+  background-image: url('../marca/fundo-entrada.webp');
+  background-size: cover; background-position: center left;
+}
+/* O véu vem da direita: as ondas índigo e o balão grande ocupam o canto
+   de baixo à esquerda, e é à direita que o fundo tem espaço. */
+.pu-entrada::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(265deg,
+    rgba(255,255,255,.95) 0%, rgba(255,255,255,.86) 32%,
+    rgba(255,255,255,.34) 58%, rgba(255,255,255,0) 78%);
+}
+.pu-entrada-cartao {
+  position: relative; width: 100%; max-width: 400px; margin-right: min(4vw, 56px);
+  background: #fff; border-radius: 18px; padding: clamp(24px, 4vh, 34px);
+  border-top: 3px solid var(--pu-primaria);
+  box-shadow: 0 20px 50px rgba(31,39,71,.24);
+}
+.pu-entrada-marca { display: flex; align-items: center; gap: var(--pu-e3);
+                    margin-bottom: clamp(16px, 3vh, 24px); }
+.pu-entrada-marca img { width: 46px; height: 46px; border-radius: 12px; }
+.pu-entrada-marca b { font-size: 20px; letter-spacing: -.02em; }
+.pu-entrada-marca small { display: block; font-weight: 400; font-size: 12.5px;
+                          color: var(--pu-suave); margin-top: 2px; }
+.pu-campo-senha { position: relative; }
+.pu-campo-senha input { padding-right: 96px; }
+.pu-ver-senha {
+  position: absolute; right: 6px; bottom: 6px; height: 34px; padding: 0 11px;
+  border: 0; border-radius: 9px; background: transparent; color: var(--pu-primaria);
+  font: 500 13px/1 var(--pu-fonte); cursor: pointer;
+}
+.pu-ver-senha:hover { background: var(--pu-veu); }
+
+@media (min-width: 901px) and (max-height: 780px) {
+  .pu-entrada .pu-campo { margin-bottom: var(--pu-e3); }
+  .pu-entrada-marca { margin-bottom: var(--pu-e3); }
+}
+
+/* ── estreito: uma coluna de cada vez ─────────────────────────────── */
+@media (max-width: 900px) {
+  .pu-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  .pu-lateral {
+    flex-direction: row; align-items: center; overflow-x: auto;
+    padding: var(--pu-e2) var(--pu-e3); gap: var(--pu-e1);
+  }
+  .pu-marca, .pu-empurra, .pu-lateral hr, .pu-eu { display: none; }
+  .pu-lateral .pu-nav { width: auto; white-space: nowrap; }
+  .pu-coluna { border-right: 0; }
+  .pu-fio-ecra { display: none; }
+  body[data-num-fio="true"] .pu-coluna { display: none; }
+  body[data-num-fio="true"] .pu-fio-ecra { display: flex; }
+  .pu-corpo { padding: var(--pu-e4); }
+  .pu-balao { max-width: 86%; }
+
+  .pu-entrada { background-image: none; background: var(--pu-veu);
+                align-items: flex-start; justify-content: center; }
+  .pu-entrada::before { display: none; }
+  .pu-entrada-cartao { margin-right: 0; max-width: 460px; }
+}
+.pu-voltar { display: none; }
+@media (max-width: 900px) { .pu-voltar { display: inline-grid; } }
